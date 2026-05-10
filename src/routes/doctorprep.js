@@ -5,6 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth');
 const Anthropic = require('@anthropic-ai/sdk');
 const supabase = require('../supabaseAdmin');
 
@@ -13,7 +14,7 @@ const anthropic = new Anthropic({
 });
 
 // GET /api/doctorprep — Fetch existing doctor prep reports
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -33,7 +34,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/doctorprep — Generate a new doctor prep report
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const userId = req.user.id;
     const { dateRange } = req.body; // { start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' }

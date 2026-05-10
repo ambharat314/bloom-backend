@@ -5,10 +5,11 @@
 
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth');
 const supabase = require('../supabaseAdmin');
 
 // GET /api/patterns — Fetch all pattern alerts for the user
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -28,7 +29,7 @@ router.get('/', async (req, res) => {
 });
 
 // PATCH /api/patterns/:id/read — Mark a pattern alert as read
-router.patch('/:id/read', async (req, res) => {
+router.patch('/:id/read', auth, async (req, res) => {
   try {
     const userId = req.user.id;
     const patternId = req.params.id;
