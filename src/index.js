@@ -17,7 +17,7 @@ app.use(cors({
 }));
 
 // OPTIONS preflight handle karo
-app.options('*', cors());
+app.options('/(.*)', cors());
 app.use(express.json());
 
 app.use('/api/auth',     require('./routes/auth'));
