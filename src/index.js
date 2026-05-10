@@ -10,7 +10,8 @@ app.use(cors({
     process.env.FRONTEND_URL,
     'http://localhost:5173',
     'http://localhost:5174',
-    'https://ambharat314.github.io'
+    'https://ambharat314.github.io',
+    'https://ambharat314.github.io/bloom2.0'
   ].filter(Boolean),
   credentials: true
 }));
