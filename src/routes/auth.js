@@ -160,30 +160,21 @@ router.post('/questionnaire', auth, async (req, res) => {
   }
 });
 
-// GET /api/auth/profile — Get user profile + questionnaire status
-router.get('/profile', auth, async (req, res) => {
-  try {
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('*')
-      .eq('id', req.user.id)
-      .single();
+// GET /api/auth/profile
+router.get('/profile', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token' });
 
-    const { data: questionnaire } = await supabase
-      .from('user_questionnaires')
-      .select('*')
-      .eq('user_id', req.user.id)
-      .single();
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  if (error || !user) return res.status(401).json({ error: 'Invalid token' });
 
-    res.json({
-      profile: profile || null,
-      questionnaire: questionnaire || null,
-      questionnaireCompleted: profile?.questionnaire_completed || false
-    });
-  } catch (err) {
-    console.error('Profile fetch error:', err);
-    res.status(500).json({ error: 'Failed to fetch profile' });
-  }
+  const { data } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  res.json({ user: data || user });
 });
 
 module.exports = router;
