@@ -7,14 +7,17 @@ const app = express();
 app.use(helmet());
 app.use(cors({
   origin: [
-    process.env.FRONTEND_URL,
     'http://localhost:5173',
-    'http://localhost:5174',
     'https://ambharat314.github.io',
-    'https://ambharat314.github.io/bloom2.0'
-  ].filter(Boolean),
-  credentials: true
+    'http://ambharat314.github.io'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// OPTIONS preflight handle karo
+app.options('*', cors());
 app.use(express.json());
 
 app.use('/api/auth',     require('./routes/auth'));
