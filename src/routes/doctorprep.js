@@ -5,13 +5,14 @@
 
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
 const Anthropic = require('@anthropic-ai/sdk');
 const supabase = require('../supabaseAdmin');
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
+
+const auth = require('../middleware/auth');
 
 // GET /api/doctorprep — Fetch existing doctor prep reports
 router.get('/', auth, async (req, res) => {
@@ -85,7 +86,7 @@ Generate a JSON response with this structure:
 Be thorough but concise. Focus on medically relevant patterns.`;
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-3-5-sonnet-20240620',
       max_tokens: 2048,
       system: 'You are a medical data analyst. Output ONLY valid JSON, no markdown or explanation.',
       messages: [{ role: 'user', content: reportPrompt }],

@@ -5,9 +5,10 @@
 
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
 const supabase = require('../supabaseAdmin');
 
+const auth = require('../middleware/auth');
+ 
 // GET /api/patterns — Fetch all pattern alerts for the user
 router.get('/', auth, async (req, res) => {
   try {
