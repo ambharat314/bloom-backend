@@ -64,23 +64,28 @@ router.post('/questionnaire', async (req, res) => {
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (error || !user) return res.status(401).json({ error: 'Invalid token' });
 
-    // Empty strings ko null mein convert karo
+    // camelCase → snake_case + empty string → null
     const cleanBody = Object.fromEntries(
-      Object.entries(req.body).map(([k, v]) => [k, v === '' ? null : v])
+      Object.entries(req.body).map(([k, v]) => {
+        const snakeKey = k.replace(/([A-Z])/g, '_$1').toLowerCase();
+        return [snakeKey, v === '' ? null : v];
+      })
     );
+
+    console.log('Saving questionnaire:', JSON.stringify(cleanBody));
 
     const { data, error: dbError } = await supabase
       .from('users')
-      .upsert({ 
-        id: user.id, 
+      .upsert({
+        id: user.id,
         ...cleanBody,
-        questionnaire_completed: true 
+        questionnaire_completed: true
       })
       .select()
       .single();
 
     if (dbError) {
-      console.error('Questionnaire save error:', dbError);
+      console.error('Questionnaire DB error:', JSON.stringify(dbError));
       return res.status(500).json({ error: dbError.message });
     }
 
