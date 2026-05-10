@@ -5,11 +5,11 @@ require('dotenv').config();
 
 const app = express();
 app.use(helmet());
+// app.use(helmet()); // ← ye comment out karo
 app.use(cors({
   origin: [
     'http://localhost:5173',
     'https://ambharat314.github.io',
-    'http://ambharat314.github.io'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
