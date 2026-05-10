@@ -16,8 +16,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// OPTIONS preflight handle karo
-app.options('/(.*)', cors());
+
+
 app.use(express.json());
 
 app.use('/api/auth',     require('./routes/auth'));
