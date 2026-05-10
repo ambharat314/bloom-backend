@@ -141,6 +141,12 @@ router.post('/questionnaire', auth, async (req, res) => {
       return res.status(500).json({ error: 'Failed to save questionnaire' });
     }
 
+    // Sync to legacy users table for compatibility with symptom_logs etc.
+    await supabase.from('users').upsert({
+      id: userId,
+      name: questionnaire.name || 'User'
+    });
+
     // Mark profile as questionnaire completed
     await supabase
       .from('user_profiles')
