@@ -1,7 +1,6 @@
 require('dotenv').config();
 const router = require('express').Router();
 const supabase = require('../supabaseAdmin');
-// POST /api/auth/register
 router.post('/register', async (req, res) => {
   const { email, password, name } = req.body;
   try {
@@ -12,6 +11,12 @@ router.post('/register', async (req, res) => {
       email_confirm: true
     });
     if (error) return res.status(400).json({ error: error.message });
+    await supabase.from('users').upsert({
+      id: data.user.id,
+      name: name,
+      email: email,
+    });
+
     res.status(201).json({ user: data.user });
   } catch (err) {
     console.error('Register error:', err.message);
