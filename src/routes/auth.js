@@ -37,18 +37,24 @@ router.post('/login', async (req, res) => {
 router.get('/profile', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'No token' });
-
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (error || !user) return res.status(401).json({ error: 'Invalid token' });
 
-    const { data } = await supabase
+    const { data: dbUser } = await supabase
       .from('users')
       .select('*')
       .eq('id', user.id)
       .single();
 
-    res.json({ user: data || user });
+    // ✅ Bas ye line change ki — name auth metadata se lo
+    res.json({
+      user: {
+        ...dbUser,
+        name: dbUser?.name || user.user_metadata?.name || '',
+        email: user.email,
+      }
+    });
   } catch (err) {
     console.error('Profile error:', err.message);
     res.status(500).json({ error: 'Profile fetch failed' });
