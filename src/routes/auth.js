@@ -82,30 +82,22 @@ router.post('/questionnaire', async (req, res) => {
     res.status(500).json({ error: 'Questionnaire save failed' });
   }
 });
-// GET /api/auth/profile
-router.get('/profile', async (req, res) => {
+// GET /api/auth/user
+router.get('/user', async (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'No token' });
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (error || !user) return res.status(401).json({ error: 'Invalid token' });
-
-    const { data: dbUser } = await supabase
+    const { data } = await supabase
       .from('users')
       .select('*')
       .eq('id', user.id)
       .single();
-
-    // ✅ Bas ye line change ki — name auth metadata se lo
-    res.json({
-      user: {
-        ...dbUser,
-        name: dbUser?.name || user.user_metadata?.name || '',
-        email: user.email,
-      }
-    });
+    res.json({ user: data || user });
   } catch (err) {
-    console.error('Profile error:', err.message);
-    res.status(500).json({ error: 'Profile fetch failed' });
+    console.error('User fetch error:', err.message);
+    res.status(500).json({ error: 'User fetch failed' });
   }
 });
+module.exports = router; bhai ye code kiske liye hai
